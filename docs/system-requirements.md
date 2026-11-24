@@ -1,7 +1,11 @@
+# PDF Pipeline — System Requirements
+
 ### 1. System overview
 
 PDF Pipeline is an event-driven document processing platform designed to demonstrate cloud infrastructure provisioning, asynchronous processing, distributed system reliability, scalability, and observability using AWS services and Terraform.
-The system allows users to upload PDF documents, automatically processes them through an asynchronous pipeline, and provides access to processing results and document metadata.
+
+The system allows users to upload PDF documents through a web-based graphical user interface (GUI) or REST API, automatically processes them through an asynchronous pipeline, and provides access to processing results and document metadata. The GUI acts as a thin presentation layer that consumes the existing REST API.
+
 The entire application will initially operate in a local AWS emulation environment using Floci.
 
 ### 2. Functional requirements
@@ -10,7 +14,7 @@ The entire application will initially operate in a local AWS emulation environme
 
 | ID | Requirement |
 | --- | --- |
-| FR-01 | The system shall allow users to upload PDF documents through a REST API. |
+| FR-01 | The system shall allow users to upload PDF documents through a REST API and web-based GUI. |
 | FR-02 | The system shall validate uploaded files for format and size. |
 | FR-03 | The system shall assign a unique identifier to each uploaded document. |
 | FR-04 | The system shall store original documents in an S3 bucket. |
@@ -65,6 +69,21 @@ The entire application will initially operate in a local AWS emulation environme
 | FR-33 | The system shall provide a health-check API endpoint. |
 | FR-34 | The system shall associate document processing logs with a unique document identifier. |
 
+#### 2.6. Graphical user interface
+
+| ID | Requirement |
+| --- | --- |
+| FR-35 | The system shall provide a web-based graphical user interface. |
+| FR-36 | The system shall allow users to upload PDF documents through a file selection interface. |
+| FR-37 | The system shall display upload progress. |
+| FR-38 | The system shall display a list of uploaded documents and their processing statuses. |
+| FR-39 | The system shall automatically refresh document processing statuses without requiring a page reload. |
+| FR-40 | The system shall display extracted document metadata and processing results. |
+| FR-41 | The system shall allow users to download original documents and processing results through the GUI. |
+| FR-42 | The system shall allow users to delete documents through the GUI. |
+| FR-43 | The system shall display appropriate error and success messages. |
+| FR-44 | The system shall allow authorized administrators to reprocess failed documents through the GUI. |
+
 ### 3. Non-functional requirements
 
 The following numerical thresholds are proposed acceptance targets, rather than measured or guaranteed system capabilities. They should be adjusted after establishing a performance baseline.
@@ -107,7 +126,7 @@ The following numerical thresholds are proposed acceptance targets, rather than 
 | NFR-17 | AWS services shall operate using least-privilege IAM policies. |
 | NFR-18 | S3 buckets shall not permit public access. |
 | NFR-19 | Documents and processing results shall be encrypted at rest in the production environment. |
-| NFR-20 | External production API communication shall be encrypted using HTTPS. |
+| NFR-20 | External production GUI and API communication shall be encrypted using HTTPS. |
 | NFR-21 | EC2 application instances shall not be directly accessible from the public internet in the production architecture. |
 | NFR-22 | Credentials and secrets shall not be hardcoded or committed to version control. |
 | NFR-23 | Uploaded documents shall be treated as untrusted input. |
@@ -155,7 +174,30 @@ The following numerical thresholds are proposed acceptance targets, rather than 
 | NFR-45 | The application shall use AWS-compatible SDKs and APIs. |
 | NFR-46 | Transitioning from Floci to AWS shall not require modifications to core document processing logic. |
 
+#### 3.9. Usability
+
+| ID | Requirement |
+| --- | --- |
+| NFR-47 | The graphical interface shall provide consistent navigation and visual elements. |
+| NFR-48 | The interface shall clearly distinguish between document processing statuses. |
+| NFR-49 | The interface shall provide descriptive feedback for unsuccessful operations. |
+| NFR-50 | The interface shall request confirmation before destructive operations. |
+| NFR-51 | The interface shall support common desktop screen resolutions. |
+| NFR-52 | The interface shall support current versions of major web browsers. |
+
+#### 3.10. Presentation layer architecture
+
+| ID | Requirement |
+| --- | --- |
+| NFR-53 | The presentation layer shall remain independent of the document processing logic. |
+| NFR-54 | The GUI shall communicate with backend services exclusively through the REST API. |
+| NFR-55 | Background document processing shall not block user interaction with the interface. |
+| NFR-56 | The GUI shall not contain AWS credentials or privileged service configuration. |
+| NFR-57 | The system shall undergo automated end-to-end testing of core GUI workflows. |
+| NFR-58 | Frontend assets shall be included in the reproducible application deployment process. |
+
 ### 4. Document processing lifecycle
+
 [Diagram](./diagram.png)
 
 ### 5. Proposed API endpoints
@@ -172,13 +214,45 @@ The following numerical thresholds are proposed acceptance targets, rather than 
 | POST | `/api/documents/{id}/retry` | Reprocess a failed document |
 | GET | `/health` | Application health check |
 
-### 6. Scope limitations
+### 6. User interface specification
 
-To keep the project focused on cloud engineering and distributed systems rather than document processing algorithms or frontend development, I propose the following constraints:
-- REST API only; no graphical user interface required.
+#### 6.1. Document dashboard
+
+- PDF file selection and upload progress.
+- Document list with filename, upload date, and current processing status.
+- Summary counts of documents by processing status.
+- Actions for viewing, downloading, and deleting documents.
+- Automatic status updates through periodic API polling.
+
+#### 6.2. Document details
+
+- Filename, file size, page count, title, author, word count, and character count, where available.
+- Processing status, timestamps, and failure reason, where applicable.
+- Extracted text preview and download actions for the original PDF and processing results.
+- Reprocessing action for authorized administrators when a document has failed.
+
+#### 6.3. Presentation layer deployment
+
+The GUI shall be served by the same EC2 application that hosts the REST API, accessed through the Application Load Balancer. It shall not require direct access to AWS services or a separate frontend deployment. Administrative authorization shall be enforced by the backend, not solely by the GUI.
+
+The proposed frontend stack is HTML, CSS, Bootstrap, and vanilla JavaScript using the Fetch API.
+
+### 7. Scope limitations
+
+To keep the project focused on cloud engineering and distributed systems rather than document processing algorithms or frontend development, the following constraints apply:
+
+- REST API and a basic web GUI limited to document management, processing status, and results.
+
 - PDF files only, with an initial maximum size of 10 MB and 100 pages.
+
 - Text extraction and metadata extraction only.
+
 - No OCR, AI summarization, document editing, or conversion.
-- No complex user account or multi-tenant management system.
+
+- No complex user account or multi-tenant management system; basic administrative authorization is required.
+
 - Floci as the primary development and testing environment.
+
 - Actual AWS deployment as an optional final milestone.
+
+**Validation limitation:** Floci is the primary development environment. Production-specific behavior such as multi-AZ availability, infrastructure scaling, IAM enforcement, encryption, and AWS performance must remain unverified until tested on AWS.
