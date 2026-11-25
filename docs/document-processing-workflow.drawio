@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram id="document-processing-workflow" name="Document processing workflow">
+    <mxGraphModel grid="1" gridSize="14" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="720" pageHeight="986" background="#141414" gridColor="#333333" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="heading-title-38" value="Event-driven document processing" style="text;html=1;align=left;verticalAlign=middle;spacing=0;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontFamily=Arial;fontSize=25;" vertex="1" parent="1">
+          <mxGeometry x="24" y="15" width="450" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="heading-phase-69" value="UPLOAD" style="text;html=1;align=left;verticalAlign=middle;spacing=0;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontFamily=Arial;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="24" y="56" width="250" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="heading-phase-330" value="ASYNC PROCESSING" style="text;html=1;align=left;verticalAlign=middle;spacing=0;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontFamily=Arial;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="447" y="317" width="250" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="heading-phase-644" value="OUTCOMES" style="text;html=1;align=left;verticalAlign=middle;spacing=0;strokeColor=none;fillColor=none;fontColor=#FFFFFF;fontFamily=Arial;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="24" y="631" width="250" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="upload" value="&lt;span style=&quot;font-size:16px&quot;&gt;Client → API · POST /api/documents&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Validate PDF contents, size, and page count&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="85" width="410" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="invalid" value="&lt;span style=&quot;font-size:16px&quot;&gt;Invalid upload&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;API rejects the request&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="478" y="85" width="220" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="record" value="&lt;span style=&quot;font-size:16px&quot;&gt;DynamoDB · Create document record&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Assign document ID and set UPLOADED&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="169" width="410" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="original" value="&lt;span style=&quot;font-size:16px&quot;&gt;S3 input bucket · Store original PDF&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Object creation starts the workflow&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="253" width="410" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="accepted" value="&lt;span style=&quot;font-size:16px&quot;&gt;API → Client&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;202 Accepted after both writes&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="478" y="253" width="220" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="eventbridge" value="&lt;span style=&quot;font-size:16px&quot;&gt;EventBridge · Match Object Created event&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Route input bucket events to SQS&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="348" width="410" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="queue" value="&lt;span style=&quot;font-size:16px&quot;&gt;SQS · Buffer processing jobs&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Event source mapping invokes Lambda&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="432" width="410" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="worker" value="&lt;span style=&quot;font-size:16px&quot;&gt;Lambda · Claim processing version&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Conditionally set PROCESSING in DynamoDB&lt;br&gt;Read PDF from S3 and extract text, metadata, and counts&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="516" width="410" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="stale" value="&lt;span style=&quot;font-size:16px&quot;&gt;Stale or completed job&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Acknowledge and skip&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="478" y="516" width="220" height="69" as="geometry" />
+        </mxCell>
+        <mxCell id="success" value="&lt;span style=&quot;font-size:16px&quot;&gt;Success&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Write result to S3 output&lt;br&gt;Set COMPLETED in DynamoDB&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="673" width="212" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="results" value="&lt;span style=&quot;font-size:16px&quot;&gt;Client → API&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Poll status and retrieve results&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="24" y="768" width="212" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="permanent" value="&lt;span style=&quot;font-size:16px&quot;&gt;Permanent error&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Record failure reason&lt;br&gt;and acknowledge the message&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="248" y="673" width="212" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="transient" value="&lt;span style=&quot;font-size:16px&quot;&gt;Transient error&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Set RETRYING for SQS redelivery&lt;br&gt;after the visibility timeout&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="470" y="673" width="228" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="dead-letter" value="&lt;span style=&quot;font-size:16px&quot;&gt;SQS dead-letter queue&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Reconcile exhausted attempts&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="470" y="768" width="228" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="failed" value="&lt;span style=&quot;font-size:16px&quot;&gt;FAILED&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Recorded in DynamoDB&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="518" y="839" width="180" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-retry" value="&lt;span style=&quot;font-size:16px&quot;&gt;Authorized API retry&lt;/span&gt;&lt;br&gt;&lt;span style=&quot;font-size:13px&quot;&gt;Send new version to SQS&lt;/span&gt;" style="rounded=1;absoluteArcSize=1;arcSize=26;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#141414;strokeColor=#F5F5F5;strokeWidth=1.5;fontColor=#FFFFFF;fontFamily=Arial;" vertex="1" parent="1">
+          <mxGeometry x="470" y="913" width="228" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="valid-upload" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="upload" target="record">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="invalid-upload" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitPerimeter=1;entryX=0;entryY=0.5;entryPerimeter=1;" edge="1" parent="1" source="upload" target="invalid">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="store-original" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="record" target="original">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="accept-upload" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=1;exitY=0.5;exitPerimeter=1;entryX=0;entryY=0.5;entryPerimeter=1;" edge="1" parent="1" source="original" target="accepted">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="object-created" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;dashed=1;dashPattern=7 6;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="original" target="eventbridge">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="route-event" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;dashed=1;dashPattern=7 6;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="eventbridge" target="queue">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="invoke-worker" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;dashed=1;dashPattern=7 6;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="queue" target="worker">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="skip-stale" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=1;exitY=0.3977272727272727;exitPerimeter=1;entryX=0;entryY=0.5;entryPerimeter=1;" edge="1" parent="1" source="worker" target="stale">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="outcome-junction" value="" style="fillOpacity=0;strokeOpacity=0;opacity=0;" vertex="1" parent="1">
+          <mxGeometry x="229" y="654" width="0" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="worker-outcome" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=none;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="worker" target="outcome-junction">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="success-branch" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="outcome-junction" target="success">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="654" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="permanent-branch" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="outcome-junction" target="permanent">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="354" y="654" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="transient-branch" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="outcome-junction" target="transient">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="584" y="654" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="retrieve-results" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="success" target="results">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="record-permanent" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0;entryY=0.19642857142857142;entryPerimeter=1;" edge="1" parent="1" source="permanent" target="failed">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="354" y="850" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="exhausted-attempts" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="transient" target="dead-letter">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="reconcile-failure" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitPerimeter=1;entryX=0.36666666666666664;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="dead-letter" target="failed">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="retry-failed" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;exitX=0.36666666666666664;exitY=1;exitPerimeter=1;entryX=0.5;entryY=0;entryPerimeter=1;" edge="1" parent="1" source="failed" target="admin-retry">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="enqueue-new-version" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;dashed=1;dashPattern=7 6;exitX=1;exitY=0.5;exitPerimeter=1;entryX=1;entryY=0.5;entryPerimeter=1;" edge="1" parent="1" source="admin-retry" target="queue">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="710" y="941" />
+              <mxPoint x="710" y="461" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="redelivery" style="html=1;rounded=0;noEdgeStyle=1;strokeColor=#F5F5F5;strokeWidth=1.4;endArrow=classic;endFill=1;dashed=1;dashPattern=7 6;exitX=0;exitY=0.5;exitPerimeter=1;entryX=1;entryY=0.7241379310344828;entryPerimeter=1;" edge="1" parent="1" source="transient" target="queue">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="465" y="709" />
+              <mxPoint x="465" y="474" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

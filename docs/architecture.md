@@ -21,6 +21,8 @@ This document describes the proposed architecture for [PDF Pipeline](../README.m
 
 ## Request and processing flow
 
+![Event-driven document-processing workflow](./document-processing-workflow.svg)
+
 1. A client uploads a PDF to `POST /api/documents`. The API validates the file contents and enforces the 10 MB and 100-page limits.
 2. The API assigns a document ID, creates the DynamoDB record in `UPLOADED`, and writes the original to its S3 input key. Creating the record first lets the worker resolve the document even if the event arrives before the HTTP response. The API returns HTTP `202 Accepted` with processing still asynchronous once both writes succeed.
 3. The input bucket emits an `Object Created` event. An EventBridge rule routes it to the SQS processing queue, whose event source mapping invokes Lambda. The processor uses the input key to resolve the document and its initial processing version. It claims that version in DynamoDB before reading the PDF.
