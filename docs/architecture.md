@@ -42,6 +42,44 @@ The [document lifecycle diagram](./diagram.png) shows the processing states. `UP
 
 Implementation must define recovery for partial uploads and for a manual retry whose DynamoDB update succeeds but whose SQS send fails.
 
+## DynamoDB document record
+
+![DynamoDB document record ERD showing the embedded maps and sparse listing index](./document-record-erd.svg)
+
+The proposed `documents` table stores one item per document. Its partition key is `documentId` (string), with no sort key. API reads, processing claims, failure reconciliation, and administrative updates all address the same item. The original PDF and extracted text reside in S3.
+
+| Attribute | DynamoDB type | Meaning |
+| --- | --- | --- |
+| `documentId` | String | Immutable application-generated ID. The input key `originals/{documentId}.pdf` lets the upload event resolve the item directly. |
+| `originalFilename`, `fileSizeBytes` | String, Number | Validated upload metadata. The filename is display metadata. |
+| `originalKey`, `resultKey` | String | Keys in the configured input and output buckets, respectively. `resultKey` appears when the result is committed. |
+| `status`, `processingVersion` | String, Number | Document lifecycle state and active processing version. The initial version is `1`. An administrative retry increments it. |
+| `createdAt`, `uploadedAt` | String | Record creation and successful upload timestamps. Set `uploadedAt` after the S3 write succeeds. |
+| `processingStartedAt`, `processingEndedAt` | String | First claim and terminal outcome for the active version. Automatic retries preserve the first start time. |
+| `claimId`, `claimExpiresAt` | String, Number | Worker claim token and lease expiry as Unix epoch seconds. Present while a claim is active. |
+| `metadata` | Map | `pageCount`, `wordCount`, and `characterCount` as numbers, with `title` and `author` as strings when available. |
+| `failure` | Map | Stable `code`, sanitized `message`, `kind` (`PERMANENT` or `RETRIES_EXHAUSTED`), and `recordedAt`. Present on terminal failure. |
+| `retryDispatchPending`, `deletionRequestedAt` | Boolean, String | Internal markers for an unconfirmed retry submission and in-progress deletion. |
+| `listPartition`, `listSort` | String | Sparse index keys, set once upload succeeds and removed when deletion starts. |
+
+Use fixed-width UTC timestamps such as `2026-11-26T12:30:00.000Z` for date strings and omit optional attributes until they apply.
+
+### Access patterns
+
+- **Document details, status, and downloads.** Use a strongly consistent `GetItem` when the caller needs the current record. Serve the original after upload succeeds and the result when `status = COMPLETED` and `resultKey` exists. Exclude items marked for deletion.
+- **Document list.** Query the sparse `DocumentsByUploadTime` global secondary index with `listPartition = DOCUMENTS` and `listSort = {uploadedAt}#{documentId}`. Read newest first, project `originalFilename`, `uploadedAt`, and `status`, and paginate with `LastEvaluatedKey`. The dashboard can briefly show stale entries or status because index reads are eventually consistent. The shared partition key keeps the initial list query simple and concentrates index traffic on one key, so reassess it if load testing shows throttling. [DynamoDB global secondary indexes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html) · [DynamoDB Query](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Query.html)
+
+### Conditional writes
+
+| Operation | Condition and update |
+| --- | --- |
+| Accept upload | Create the record only if the ID is unused. After the S3 write, set `uploadedAt` and the listing keys without changing `status`. An early event can advance processing before this update. |
+| Claim job | An S3 event targets version `1`. An administrative retry message carries its version explicitly. Require an existing item, the expected version, no deletion marker, and an eligible state (`UPLOADED`, `QUEUED`, `RETRYING`, or `PROCESSING` with an expired lease). Set `PROCESSING`, initialize `processingStartedAt` if absent, and issue a fresh claim token and lease. |
+| Finish or release claim | Require `PROCESSING`, the matching version and claim token, an unexpired lease, and no deletion marker. On success, write the result to `results/{documentId}/{processingVersion}/{claimId}.json` first, then commit `resultKey`, `metadata`, `processingEndedAt`, and `COMPLETED` together. On transient failure, set `RETRYING`. On permanent failure, set `FAILED` with failure details and `processingEndedAt`. Clear the claim attributes when releasing it. |
+| Reconcile exhausted job | Require the matching version, a nonterminal state, and no unexpired claim or deletion marker. Set `FAILED`, record the failure and end time, and clear claim attributes. Ignore obsolete or already-terminal jobs. Revisit a matching job if its claim is still active. |
+| Prepare administrative retry | Require an accepted upload in `FAILED` with no deletion marker. Increment `processingVersion`, set `RETRYING`, clear the previous version's claim, result, metadata, timestamps, and failure, and set `retryDispatchPending`. Clear the marker for that version after a successful SQS send or worker claim. A pending marker allows recovery to resend that same version. |
+| Delete document | Require `COMPLETED` or `FAILED`. Set `deletionRequestedAt` and remove the list index keys in the same update. This blocks retry and worker state changes while the API removes S3 objects under the document's keys and prefixes. Account for writes from workers that lost their claims before cleanup completes. Remove the record after cleanup succeeds. |
+
 ## Deployment and security
 
 **Local.** Run the application against Floci using configurable AWS endpoints and AWS-compatible SDKs. Use Terraform to provision supported integrations and keep environment-specific settings outside business logic.

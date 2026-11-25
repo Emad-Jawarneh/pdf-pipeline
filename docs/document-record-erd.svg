@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 647" role="img" aria-labelledby="title description">
+  <title id="title">DynamoDB document record ERD</title>
+  <desc id="description">The documents table has one item per document. Each item can contain an embedded metadata map, an embedded failure map, and at most one entry in the sparse upload-time index.</desc>
+  <style>
+    text { font-family: Arial, sans-serif; fill: #fff; font-size: 14px; }
+    .title { font-size: 24px; }
+    .header { font-size: 16px; font-weight: bold; }
+    .detail { fill: #ddd; font-size: 12px; }
+    .box { fill: #141414; stroke: #f5f5f5; stroke-width: 1.5; }
+    .line { fill: none; stroke: #f5f5f5; stroke-width: 1.4; }
+  </style>
+  <defs>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M14 0V56 M28 0V56 M42 0V56 M0 14H56 M0 28H56 M0 42H56" fill="none" stroke="#222" />
+      <path d="M0 56V0H56" fill="none" stroke="#333" stroke-width="2" />
+    </pattern>
+    <marker id="er-one" viewBox="0 0 12 14" refX="2" refY="7" markerWidth="12" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M8 2V12" class="line" />
+    </marker>
+    <marker id="er-zero-or-one" viewBox="0 0 18 14" refX="17" refY="7" markerWidth="18" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto">
+      <circle cx="6" cy="7" r="4" fill="#141414" stroke="#f5f5f5" stroke-width="1.4" />
+      <path d="M14 2V12" class="line" />
+    </marker>
+  </defs>
+  <rect width="720" height="647" fill="#141414" />
+  <rect width="720" height="647" fill="url(#grid)" />
+  <text x="24" y="38" class="title">DynamoDB document record ERD</text>
+  <rect x="24" y="64" width="298" height="524" rx="13" class="box" />
+  <text x="38" y="88" class="header">documents</text>
+  <text x="38" y="108" class="detail">One item per document · no sort key</text>
+  <path d="M24 118H322" class="line" />
+  <text x="38" y="140">documentId</text>
+  <text x="308" y="140" text-anchor="end" class="detail">String · PK</text>
+  <text x="38" y="164">originalFilename</text>
+  <text x="308" y="164" text-anchor="end" class="detail">String</text>
+  <text x="38" y="188">fileSizeBytes</text>
+  <text x="308" y="188" text-anchor="end" class="detail">Number</text>
+  <text x="38" y="212">originalKey</text>
+  <text x="308" y="212" text-anchor="end" class="detail">String</text>
+  <text x="38" y="236">resultKey</text>
+  <text x="308" y="236" text-anchor="end" class="detail">String</text>
+  <text x="38" y="260">status</text>
+  <text x="308" y="260" text-anchor="end" class="detail">String</text>
+  <text x="38" y="284">processingVersion</text>
+  <text x="308" y="284" text-anchor="end" class="detail">Number</text>
+  <text x="38" y="308">createdAt</text>
+  <text x="308" y="308" text-anchor="end" class="detail">String</text>
+  <text x="38" y="332">uploadedAt</text>
+  <text x="308" y="332" text-anchor="end" class="detail">String</text>
+  <text x="38" y="356">processingStartedAt</text>
+  <text x="308" y="356" text-anchor="end" class="detail">String</text>
+  <text x="38" y="380">processingEndedAt</text>
+  <text x="308" y="380" text-anchor="end" class="detail">String</text>
+  <text x="38" y="404">claimId</text>
+  <text x="308" y="404" text-anchor="end" class="detail">String</text>
+  <text x="38" y="428">claimExpiresAt</text>
+  <text x="308" y="428" text-anchor="end" class="detail">Number</text>
+  <text x="38" y="452">metadata</text>
+  <text x="308" y="452" text-anchor="end" class="detail">Map</text>
+  <text x="38" y="476">failure</text>
+  <text x="308" y="476" text-anchor="end" class="detail">Map</text>
+  <text x="38" y="500">retryDispatchPending</text>
+  <text x="308" y="500" text-anchor="end" class="detail">Boolean</text>
+  <text x="38" y="524">deletionRequestedAt</text>
+  <text x="308" y="524" text-anchor="end" class="detail">String</text>
+  <text x="38" y="548">listPartition</text>
+  <text x="308" y="548" text-anchor="end" class="detail">String</text>
+  <text x="38" y="572">listSort</text>
+  <text x="308" y="572" text-anchor="end" class="detail">String</text>
+  <rect x="466" y="106" width="230" height="188" rx="13" class="box" />
+  <text x="480" y="130" class="header">metadata</text>
+  <text x="480" y="150" class="detail">Embedded map</text>
+  <path d="M466 160H696" class="line" />
+  <text x="480" y="182">pageCount</text>
+  <text x="682" y="182" text-anchor="end" class="detail">Number</text>
+  <text x="480" y="206">wordCount</text>
+  <text x="682" y="206" text-anchor="end" class="detail">Number</text>
+  <text x="480" y="230">characterCount</text>
+  <text x="682" y="230" text-anchor="end" class="detail">Number</text>
+  <text x="480" y="254">title</text>
+  <text x="682" y="254" text-anchor="end" class="detail">String · optional</text>
+  <text x="480" y="278">author</text>
+  <text x="682" y="278" text-anchor="end" class="detail">String · optional</text>
+  <rect x="466" y="308" width="230" height="164" rx="13" class="box" />
+  <text x="480" y="332" class="header">failure</text>
+  <text x="480" y="352" class="detail">Embedded map</text>
+  <path d="M466 362H696" class="line" />
+  <text x="480" y="384">code</text>
+  <text x="682" y="384" text-anchor="end" class="detail">String</text>
+  <text x="480" y="408">message</text>
+  <text x="682" y="408" text-anchor="end" class="detail">String</text>
+  <text x="480" y="432">kind</text>
+  <text x="682" y="432" text-anchor="end" class="detail">String</text>
+  <text x="480" y="456">recordedAt</text>
+  <text x="682" y="456" text-anchor="end" class="detail">String</text>
+  <rect x="466" y="486" width="230" height="140" rx="13" class="box" />
+  <text x="480" y="510" class="header">DocumentsByUploadTime</text>
+  <text x="480" y="530" class="detail">Sparse GSI · newest-first list</text>
+  <path d="M466 540H696" class="line" />
+  <text x="480" y="562">listPartition</text>
+  <text x="682" y="562" text-anchor="end" class="detail">String · PK</text>
+  <text x="480" y="586">listSort</text>
+  <text x="682" y="586" text-anchor="end" class="detail">String · SK</text>
+  <text x="480" y="610">Projects</text>
+  <text x="682" y="610" text-anchor="end" class="detail">Name · date · status</text>
+  <path d="M322 448H348V173H466" class="line" marker-start="url(#er-one)" marker-end="url(#er-zero-or-one)" />
+  <path d="M322 472H382V375H466" class="line" marker-start="url(#er-one)" marker-end="url(#er-zero-or-one)" />
+  <path d="M322 548H407V552H466" class="line" marker-start="url(#er-one)" marker-end="url(#er-zero-or-one)" />
+  <text x="24" y="621" class="header">S3 references</text>
+  <text x="145" y="621" class="detail">originalKey → original PDF  ·  resultKey → committed result</text>
+</svg>
