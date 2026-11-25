@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/api/">
+    <Project Path="src/api/PdfPipeline.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/worker/" />
+  <Folder Name="/src/worker/processor/">
+    <Project Path="src/worker/processor/PdfPipeline.Processor.csproj" />
+  </Folder>
+  <Folder Name="/src/worker/reconciliation/">
+    <Project Path="src/worker/reconciliation/PdfPipeline.Reconciliation.csproj" />
+  </Folder>
+</Solution>

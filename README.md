@@ -29,3 +29,26 @@ tests/
   workflows/             GitHub Actions workflows
 docs/                    Requirements, architecture, and diagrams
 ```
+
+## Initialize the development environment
+
+Build the API and worker projects with the .NET 10 SDK.
+
+```sh
+dotnet build PdfPipeline.slnx
+dotnet run --project src/api/PdfPipeline.Api.csproj -- --urls http://localhost:5080
+```
+
+The API exposes `GET /health` at `http://localhost:5080/health`. The worker projects are class library scaffolds for the processor and reconciliation handlers.
+
+Initialize and validate the Terraform roots independently. The local root points the pipeline services at Floci. The AWS root accepts `TF_VAR_aws_region` for a future deployment. Both roots currently contain provider configuration only.
+
+```sh
+terraform fmt -check -recursive infra
+terraform -chdir=infra/environments/local init
+terraform -chdir=infra/environments/local validate
+terraform -chdir=infra/environments/aws init
+terraform -chdir=infra/environments/aws validate
+```
+
+When using Floci, override its default URL with `TF_VAR_floci_endpoint` if needed, and supply dummy AWS credentials in your local shell. [Floci AWS setup](https://github.com/floci-io/floci/blob/main/docs/getting-started/aws-setup.md)

@@ -7,6 +7,12 @@
 *.pem
 *.key
 
+# .NET build output and local IDE settings
+[Bb]in/
+[Oo]bj/
+.vs/
+*.csproj.user
+
 # Terraform working directories, state, and local inputs
 .terraform/
 *.tfstate
