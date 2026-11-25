@@ -198,7 +198,7 @@ The following numerical thresholds are proposed acceptance targets, rather than 
 
 ### 4. Document processing lifecycle
 
-[Diagram](./diagram.png)
+![Document processing lifecycle](./diagram.png)
 
 ### 5. Proposed API endpoints
 
