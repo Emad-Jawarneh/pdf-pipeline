@@ -6,7 +6,7 @@ Local development targets Floci, an AWS emulator. Deployment to AWS is an option
 
 ## Current status
 
-The repository contains an ASP.NET Core API with a `GET /health` endpoint, .NET class library scaffolds for the processing and reconciliation workers, and Terraform provider configurations for Floci and AWS. Uploads, the browser interface, PDF processing, and resource provisioning are planned.
+The repository contains an ASP.NET Core API with a `GET /health` endpoint, .NET class library scaffolds for the processing and reconciliation workers, and Terraform configurations for Floci and AWS. The local configuration provisions a private S3 bucket for original PDFs. Uploads, the browser interface, and PDF processing are planned.
 
 ## Planned workflow
 
