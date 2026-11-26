@@ -1,0 +1,4 @@
+services:
+  floci:
+    environment:
+      FLOCI_SERVICES_S3_ENFORCE_AUTH: "true"

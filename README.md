@@ -6,7 +6,7 @@ Local development targets Floci, an AWS emulator. Deployment to AWS is an option
 
 ## Current status
 
-The repository contains an ASP.NET Core API with a `GET /health` endpoint, .NET class library scaffolds for the processing and reconciliation workers, and Terraform configurations for Floci and AWS. The local configuration provisions a private S3 bucket for original PDFs. Uploads, the browser interface, and PDF processing are planned.
+The repository contains an ASP.NET Core API with a `GET /health` endpoint and .NET class library scaffolds for the processing and reconciliation workers. Local Terraform provisions the originals bucket, an SQS processing queue and dead-letter queue, and the EventBridge rule that connects S3 uploads to the processing queue. API uploads, the browser interface, and PDF processing are planned.
 
 ## Planned workflow
 
@@ -46,7 +46,7 @@ docs/                    Requirements, architecture, and diagrams
 
 ### Start and stop the local environment
 
-On Linux, install the .NET 10 SDK, Docker Compose, `curl`, and `flock`. The scripts use a Floci checkout next to this repository. Set `FLOCI_DIR` to use a different checkout.
+On Linux, install the .NET 10 SDK, Docker Compose, `curl`, and `flock`. The scripts use a Floci checkout at `~/floci`. Set `FLOCI_DIR` to use a different checkout.
 
 ```sh
 ./scripts/start-environment.sh
@@ -54,6 +54,8 @@ On Linux, install the .NET 10 SDK, Docker Compose, `curl`, and `flock`. The scri
 ```
 
 The start script runs the `floci` Compose service and starts the API in the background. The API binds to `127.0.0.1:5080` by default. Set `PDFPIPELINE_API_PORT` to change the port. API logs are in `.local-run/api.log`. The stop script stops the API and the configured Floci service, preserving its container and persistent data. Terraform remains a separate step.
+
+The Compose override enables S3 authorization for the local emulator. Use `test` as both the access key ID and secret access key for signed local S3 requests. Applying the override to an existing container may recreate it with the same persistent data mount.
 
 ### Build and run the API
 
@@ -82,7 +84,7 @@ terraform -chdir=infra/environments/aws init
 terraform -chdir=infra/environments/aws validate
 ```
 
-The local root defaults to `http://localhost:4566` and `us-east-1`. Override them with `TF_VAR_floci_endpoint` and `TF_VAR_aws_region` as needed. Use dummy AWS credentials in your local shell when connecting to Floci. The AWS root requires an explicit region when planning a deployment. [Floci AWS setup](https://github.com/floci-io/floci/blob/main/docs/getting-started/aws-setup.md)
+The local root defaults to `http://localhost:4566` and `us-east-1`. Override them with `TF_VAR_floci_endpoint` and `TF_VAR_aws_region` as needed. With Floci running and local credentials configured, run `terraform -chdir=infra/environments/local plan -out=local.tfplan`, review the plan, then run `terraform -chdir=infra/environments/local apply local.tfplan`. The AWS root requires an explicit region when planning a deployment. [Floci AWS setup](https://github.com/floci-io/floci/blob/main/docs/getting-started/aws-setup.md)
 
 ## Design documentation
 

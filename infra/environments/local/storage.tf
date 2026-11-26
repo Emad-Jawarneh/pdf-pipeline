@@ -23,3 +23,10 @@ output "originals_bucket_name" {
   description = "Bucket for original PDF uploads in Floci."
   value       = aws_s3_bucket.originals.bucket
 }
+
+resource "aws_s3_bucket_notification" "originals" {
+  bucket      = aws_s3_bucket.originals.id
+  eventbridge = true
+
+  depends_on = [aws_cloudwatch_event_target.processing]
+}

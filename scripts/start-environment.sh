@@ -15,7 +15,7 @@ if ! read_api_pid; then
   dotnet build "$repo_root/src/api/PdfPipeline.Api.csproj" --configuration Debug 9>&-
 fi
 
-compose up -d --no-recreate floci
+compose up -d floci
 
 wait_for_http() {
   local url=$1

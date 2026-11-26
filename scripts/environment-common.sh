@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-floci_dir=${FLOCI_DIR:-"~/floci"}
+floci_dir=${FLOCI_DIR:-"$HOME/floci"}
 run_dir="$repo_root/.local-run"
 api_dll="$repo_root/src/api/bin/Debug/net10.0/PdfPipeline.Api.dll"
 api_url="http://127.0.0.1:${PDFPIPELINE_API_PORT:-5080}"
@@ -13,7 +13,9 @@ flock -w 120 9
 trap 'flock -u 9' EXIT
 
 compose() {
-  docker compose --project-directory "$floci_dir" -f "$floci_dir/docker-compose.yml" "$@"
+  docker compose --project-directory "$floci_dir" \
+    -f "$floci_dir/docker-compose.yml" \
+    -f "$repo_root/infra/environments/local/floci.compose.yml" "$@"
 }
 
 read_api_pid() {
