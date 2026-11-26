@@ -1,5 +1,6 @@
 #Persistent data
 data/
+.local-run/
 # Local credentials and environment settings
 .aws/
 .env

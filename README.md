@@ -44,6 +44,17 @@ docs/                    Requirements, architecture, and diagrams
 
 ## Quick start
 
+### Start and stop the local environment
+
+On Linux, install the .NET 10 SDK, Docker Compose, `curl`, and `flock`. The scripts use a Floci checkout next to this repository. Set `FLOCI_DIR` to use a different checkout.
+
+```sh
+./scripts/start-environment.sh
+./scripts/stop-environment.sh
+```
+
+The start script runs the `floci` Compose service and starts the API in the background. The API binds to `127.0.0.1:5080` by default. Set `PDFPIPELINE_API_PORT` to change the port. API logs are in `.local-run/api.log`. The stop script stops the API and the configured Floci service, preserving its container and persistent data. Terraform remains a separate step.
+
 ### Build and run the API
 
 With the .NET 10 SDK installed, run these commands from the repository root.
