@@ -1,3 +1,5 @@
+#Persistent data
+data/
 # Local credentials and environment settings
 .aws/
 .env
